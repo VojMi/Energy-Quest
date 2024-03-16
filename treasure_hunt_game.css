@@ -1,0 +1,42 @@
+/* Style the grid container */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(7, 50px);
+    grid-template-rows: repeat(7, 50px);
+    grid-gap: 5px;
+    margin-bottom: 20px;
+    border: 1px solid black;
+    padding: 5px;
+}
+
+/* Style individual grid squares */
+.grid-item {
+    background-color: lightblue;
+    border: 1px solid #999;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Style disabled grid squares */
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Style the treasure cell */
+.treasure {
+    background-color: gold; /* Change to the desired color for the treasure cell */
+}
+
+/* Style the message field */
+.message {
+    margin-top: 20px;
+    width: calc(100% - 10px);
+    height: 600px;
+    font-size: 20px;
+    color: green;
+    resize: none;
+    overflow-y: scroll;
+}
