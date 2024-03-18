@@ -1,0 +1,57 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    font-weight: bold; /* Make all text bold */
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+}
+
+#stats {
+    margin: 20px 0;
+}
+
+#gameGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    width: 450px; /* Adjust based on your preference to make cells square */
+    margin: 20px auto;
+    background-color: white; /* Set light green color for the grid */
+    padding: 10px; /* Add padding for better appearance */
+}
+
+.gameCell {
+    background-color: #4CAF50; /* Set light blue color for individual cells */
+    border: 1px solid #ddd;
+    padding: 20px; /* Adjust or remove padding to ensure cells are square */
+    aspect-ratio: 1; /* Ensures cells are always square */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.found {
+    background-color: gold;
+}
+
+#hintText {
+    color: green;
+    margin: 20px 0;
+}
+
+/* Increase text size by 50% */
+p, span {
+    font-size: 150%;
+}
