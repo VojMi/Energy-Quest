@@ -84,15 +84,15 @@ function handleCorrectGuess() {
     // Ensure energy does not exceed 100 points
     energy = Math.min(energy, 100);
 
-    // Update hint text and reset game
+    // Update hint text
     hintText.textContent = "Congratulations! You've found the reward!";
-    setTimeout(function() {
-        const correctCell = document.getElementById(`cell-${rewardCellIndex}`);
-        correctCell.classList.add('found'); // Change color of the correct cell to gold
-        resetGame(); // Start a new round after the pause
-    });
-}
 
+    const correctCell = document.getElementById(`cell-${rewardCellIndex}`);
+    correctCell.classList.add('found'); // Change color of the correct cell to gold
+
+    // Reset game state after a short delay for visual effect (if desired)
+    resetGame();
+}
 
 function resetGame() {
     setTimeout(function() {
