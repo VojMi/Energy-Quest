@@ -16,6 +16,7 @@ header {
 }
 
 #energyBar {
+transition: width 0.6s ease, background-color 0.6s ease;
   width: 100%; /* Adjust based on energy level */
   height: 50px; /* Or any size */
   background-color: #4CAF50;
@@ -41,7 +42,7 @@ header {
 }
 
 .gameCell {
-	transition: background-color 0.6s ease, transform 0.5s ease;
+	transition: background-color 0.6s ease, transform 0.6s ease;
 
     background-color: #4CAF50; /* Set light blue color for individual cells */
     border: 1px solid #ddd;
