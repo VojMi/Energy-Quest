@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+	let attemptsThisRound = 0; // Resets at the start of each round
     let isPaused = false; // Flag to check if the game is paused
     const energyElement = document.getElementById('energy');
     const attemptsElement = document.getElementById('attempts');
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gameGrid.appendChild(cell);
     }
 
+
     function selectRewardCell() {
         const probabilities = [
             16, 8, 8, 4, 8, 8, 16,
@@ -66,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => cell.classList.remove('click-effect'), 100); // Remove the effect after 100ms
         clickSound.play();
         attempts++;
+		 attemptsThisRound++; // Attempts in this round
         energy--; // Deduct 1 energy point for each guess
         if (index === rewardCellIndex) {
             // Correct guess
@@ -82,9 +85,8 @@ function handleCorrectGuess() {
         isPaused = true; // Pause the game immediately on correct guess
         rewardSound.play();
 		
-        // Add energy points based on the guess count
-        let pointsAdded = getEnergyPointsAdded(attempts);
-        energy = Math.min(energy + pointsAdded, 100); // Ensure energy does not exceed 100 points
+       let pointsAdded = getEnergyPointsAdded(attemptsThisRound); // Use attemptsThisRound here
+    energy = Math.min(energy + pointsAdded, 100); // Ensure energy does not exceed 100 points
 		
         // Change color of the correct cell to gold
         const correctCell = document.getElementById(`cell-${rewardCellIndex}`);
@@ -106,6 +108,7 @@ hintText.innerHTML = message;
 
 
 function resetGame() {
+	    attemptsThisRound = 0; // Reset attempts for the new round
     // Reset golden cells
     const goldenCells = document.querySelectorAll('.found');
     goldenCells.forEach(cell => cell.classList.remove('found'));
@@ -116,10 +119,10 @@ function resetGame() {
         updateStats(); // Update game statistics display post-pause
         rewardCellIndex = selectRewardCell(); // Choose a new reward cell for the new round
 
-        if (attempts >= 135) {
+        if (attempts >= 140) {
             victorySound.play();
             // Display congratulations message and visually mark all cells as 'found'
-            hintText.textContent = "Congratulations! You've reached 135 attempts!";
+            hintText.textContent = "Congratulations! You've reached 140 attempts!";
             const allCells = document.querySelectorAll('.gameCell');
             allCells.forEach(cell => cell.classList.add('found'));
         } else {
@@ -170,7 +173,7 @@ function enableAllCells() {
     }
 
     function updateStats() {
-    attemptsElement.textContent = `${attempts} / 135`;
+    attemptsElement.textContent = `${attempts} / 140`;
     // Update the width of the energy bar
     var energyBar = document.getElementById("energyBar");
     energyBar.style.width = `${energy}%`;
@@ -183,7 +186,7 @@ function enableAllCells() {
     } else { // Low energy: red
         energyBar.style.backgroundColor = "#f44336";
     }
-        if (energy <= 0 || attempts >= 135) {
+        if (energy <= 0 || attempts >= 140) {
 			 loseSound.play();
             disableAllCells();
             hintText.textContent = "Game Over. Refresh to play again!";
