@@ -105,6 +105,9 @@ function resetGame() {
         // Reset game state
         hintText.textContent = ""; // Clear hint text
         updateStats(); // Update game statistics display
+
+        rewardCellIndex = selectRewardCell(); // Reset reward cell for new round
+
         if (attempts >= 150) {
             // Congratulations message and make all cells golden
             hintText.textContent = "Congratulations! You've reached 150 attempts!";
