@@ -49,13 +49,7 @@ function guess(cell, index) {
 
     if (index === rewardCellIndex) {
         // Correct guess
-        cell.classList.add('found');
-        hintText.textContent = "Congratulations! You've found the reward!";
-        setTimeout(function() {
-            disableAllCells();
-            rewardCellIndex = selectRewardCell(); // Reset reward cell for new round
-            resetGame(); // Start a new round after the pause
-        });
+        handleCorrectGuess();
     } else {
         // Provide specific directional hint
         provideHint(index, rewardCellIndex);
@@ -63,6 +57,42 @@ function guess(cell, index) {
 
     updateStats();
 }
+
+function handleCorrectGuess() {
+    // Add energy points based on the guess count
+    switch (attempts) {
+        case 1:
+            energy += 32;
+            break;
+        case 2:
+            energy += 16;
+            break;
+        case 3:
+            energy += 8;
+            break;
+        case 4:
+            energy += 4;
+            break;
+        case 5:
+            energy += 2;
+            break;
+        default:
+            energy += 1;
+            break;
+    }
+
+    // Ensure energy does not exceed 100 points
+    energy = Math.min(energy, 100);
+
+    // Update hint text and reset game
+    hintText.textContent = "Congratulations! You've found the reward!";
+    setTimeout(function() {
+        const correctCell = document.getElementById(`cell-${rewardCellIndex}`);
+        correctCell.classList.add('found'); // Change color of the correct cell to gold
+        resetGame(); // Start a new round after the pause
+    });
+}
+
 
 function resetGame() {
     setTimeout(function() {
