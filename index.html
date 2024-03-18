@@ -8,16 +8,17 @@
 </head>
 <body>
     <header>
-        <img src="path_to_your_logo.png" alt="Energy Quest Logo" id="logo">
-        <h1>Energy Quest</h1>
+        <img src="Images/logo.png" alt="Energy Quest Logo" id="logo">
     </header>
 <section id="stats">
-    <p><b>Remaining Energy Points:</b> <span id="energy">100</span></p>
-    <p><b>Number of Attempts:</b> <span id="attempts">0</span></p>
+	 <div id="energyBarContainer">
+        <div id="energyBar"></div>
+    </div>
+    <p><b>Number of Attempts:</b> <span id="attempts">0 / 135</span></p>
 </section>
 
     <div id="gameGrid"></div>
-    <p id="hintText" style="color:green;">Hints will appear here</p>
+    <p id="hintText" style="color:green;">Goal: Reach 135 attempts and stay alive!</p>
     <script src="script.js"></script>
 </body>
 </html>

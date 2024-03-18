@@ -4,16 +4,30 @@ body, html {
     font-family: Arial, sans-serif;
     text-align: center;
     font-weight: bold; /* Make all text bold */
+    font-size: 20px; /* Set the font size for all text */
 }
 
 header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 20px;
+    background-color: #001c30;
+}
+#energyBarContainer {
+  width: 100%;
+  background-color: #ddd;
 }
 
+#energyBar {
+  width: 100%; /* Adjust based on energy level */
+  height: 50px; /* Or any size */
+  background-color: #4CAF50;
+  text-align: center; /* If you want text inside it */
+  font-weight: bold; /* Make all text bold */
+  font-size: 28px; /* Set the font size for all text */
+  line-height: 50px; /* Align the text vertically */
+  color: #001c30;
+}
 #stats {
-    margin: 20px 0;
+    margin: 10px 0;
+    font-size: 20px; /* Set the font size for stats */
 }
 
 #gameGrid {
@@ -21,37 +35,43 @@ header {
     grid-template-columns: repeat(7, 1fr);
     gap: 5px;
     width: 450px; /* Adjust based on your preference to make cells square */
-    margin: 20px auto;
+    margin: 10px auto;
     background-color: white; /* Set light green color for the grid */
     padding: 10px; /* Add padding for better appearance */
 }
 
 .gameCell {
+	transition: background-color 0.6s ease, transform 0.5s ease;
+
     background-color: #4CAF50; /* Set light blue color for individual cells */
     border: 1px solid #ddd;
-    padding: 20px; /* Adjust or remove padding to ensure cells are square */
+    padding: 10px; /* Adjust or remove padding to ensure cells are square */
     aspect-ratio: 1; /* Ensures cells are always square */
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    font-size: 20px; /* Set the font size for game cells */
+}
+.gameCell.click-effect {
+  transform: scale(0.9); /* Scales down the cell */
+}
+.found {
+  background-color: gold; /* Or any color you use for revealing cells */
+  transform: rotateY(180deg); /* Flip effect */
 }
 
 .disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
-
-.found {
-    background-color: gold;
+.gameCell:hover {
+  background-color: #e0e0e0; /* Light grey */
+  cursor: pointer; /* Changes the cursor to indicate the cell can be clicked */
 }
 
 #hintText {
     color: green;
-    margin: 20px 0;
-}
-
-/* Increase text size by 50% */
-p, span {
-    font-size: 150%;
+    margin: 10px 0;
+    font-size: 24px; /* Set the font size for hint text */
 }

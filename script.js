@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    let isPaused = false; // Flag to check if the game is paused
     const energyElement = document.getElementById('energy');
     const attemptsElement = document.getElementById('attempts');
     const hintText = document.getElementById('hintText');
@@ -7,6 +8,25 @@ document.addEventListener('DOMContentLoaded', function() {
     let attempts = 0;
     let rewardCellIndex = selectRewardCell();
     const gridSize = 7; // Size of the grid (7x7)
+    const clickSound = new Audio('sounds/click.wav');
+    const rewardSound = new Audio('sounds/reward.wav');
+    const loseSound = new Audio('sounds/loose.wav');
+    const victorySound = new Audio('sounds/victory.wav');
+    const backgroundMusic = new Audio('sounds/background.mp3');
+    // Play background music in a loop
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.8; // Adjust volume as needed
+    backgroundMusic.play(); // Start the background music
+	energyBar.textContent = energy + "% Energy"; // Optional: Display text inside the bar
+
+ function startBackgroundMusic() {
+        // Play only if not already playing
+        if (backgroundMusic.paused) {
+            backgroundMusic.play();
+            gameGrid.removeEventListener('click', startBackgroundMusic);
+        }
+    }
+    gameGrid.addEventListener('click', startBackgroundMusic);
 
     // Initialize the game grid
     for (let i = 0; i < gridSize * gridSize; i++) {
@@ -38,87 +58,75 @@ document.addEventListener('DOMContentLoaded', function() {
         return 0; // Fallback
     }
 
-function guess(cell, index) {
-    if (cell.classList.contains('disabled')) {
-        // Cell is already guessed or disabled
+  function guess(cell, index) {
+        if (isPaused || cell.classList.contains('disabled')) {
         return;
     }
-
-    attempts++;
-    energy--; // Deduct 1 energy point for each guess
-
-    if (index === rewardCellIndex) {
-        // Correct guess
-        handleCorrectGuess();
-    } else {
-        // Provide specific directional hint
-        provideHint(index, rewardCellIndex);
+    cell.classList.add('click-effect');
+    setTimeout(() => cell.classList.remove('click-effect'), 100); // Remove the effect after 100ms
+        clickSound.play();
+        attempts++;
+        energy--; // Deduct 1 energy point for each guess
+        if (index === rewardCellIndex) {
+            // Correct guess
+            handleCorrectGuess();
+        } else {
+            // Provide specific directional hint
+            provideHint(index, rewardCellIndex);
+        }
+        updateStats();
     }
 
-    updateStats();
-}
 
 function handleCorrectGuess() {
-    // Add energy points based on the guess count
-    switch (attempts) {
-        case 1:
-            energy += 32;
-            break;
-        case 2:
-            energy += 16;
-            break;
-        case 3:
-            energy += 8;
-            break;
-        case 4:
-            energy += 4;
-            break;
-        case 5:
-            energy += 2;
-            break;
-        default:
-            energy += 1;
-            break;
+        isPaused = true; // Pause the game immediately on correct guess
+        rewardSound.play();
+		
+        // Add energy points based on the guess count
+        let pointsAdded = getEnergyPointsAdded(attempts);
+        energy = Math.min(energy + pointsAdded, 100); // Ensure energy does not exceed 100 points
+		
+        // Change color of the correct cell to gold
+        const correctCell = document.getElementById(`cell-${rewardCellIndex}`);
+        correctCell.classList.add('found');
+// Construct the message based on the points added
+let message = `Congratulations! You've found the reward!<br>${pointsAdded} energy point`;
+if (pointsAdded > 1) {
+    message += 's'; // Add 's' for plural
+}
+message += ' added.';
+
+// Update the hint text with the correct grammatical form
+hintText.innerHTML = message;
+        setTimeout(function() {
+            resetGame(); // Start a new round after the pause
+        }, 2000);
+
     }
 
-    // Ensure energy does not exceed 100 points
-    energy = Math.min(energy, 100);
-
-    // Update hint text
-    hintText.textContent = "Congratulations! You've found the reward!";
-
-    const correctCell = document.getElementById(`cell-${rewardCellIndex}`);
-    correctCell.classList.add('found'); // Change color of the correct cell to gold
-
-    // Reset game state after a short delay for visual effect (if desired)
-    resetGame();
-}
 
 function resetGame() {
+    // Reset golden cells
+    const goldenCells = document.querySelectorAll('.found');
+    goldenCells.forEach(cell => cell.classList.remove('found'));
+    hintText.textContent = ""; // Clear hint text
+
+    // Await before proceeding to reset, ensuring pause-related activities conclude
     setTimeout(function() {
-        // Reset golden cell
-        const goldenCells = document.querySelectorAll('.found');
-        goldenCells.forEach(cell => {
-            cell.classList.remove('found');
-        });
+        updateStats(); // Update game statistics display post-pause
+        rewardCellIndex = selectRewardCell(); // Choose a new reward cell for the new round
 
-        // Reset game state
-        hintText.textContent = ""; // Clear hint text
-        updateStats(); // Update game statistics display
-
-        rewardCellIndex = selectRewardCell(); // Reset reward cell for new round
-
-        if (attempts >= 150) {
-            // Congratulations message and make all cells golden
-            hintText.textContent = "Congratulations! You've reached 150 attempts!";
+        if (attempts >= 135) {
+            victorySound.play();
+            // Display congratulations message and visually mark all cells as 'found'
+            hintText.textContent = "Congratulations! You've reached 135 attempts!";
             const allCells = document.querySelectorAll('.gameCell');
-            allCells.forEach(cell => {
-                cell.classList.add('found');
-            });
+            allCells.forEach(cell => cell.classList.add('found'));
         } else {
-            enableAllCells(); // Enable all cells for the new round
+            enableAllCells(); // Re-enable cell interaction for a new round
         }
-    }, 1800);
+        isPaused = false; // Important: Re-enable game interactions *after* the pause
+    }); // Duration of pause before game reset continues
 }
 
 function enableAllCells() {
@@ -128,6 +136,17 @@ function enableAllCells() {
     });
 }
 
+
+  function getEnergyPointsAdded(attempts) {
+        switch (attempts) {
+            case 1: return 32;
+            case 2: return 16;
+            case 3: return 8;
+            case 4: return 4;
+            case 5: return 2;
+            default: return 1;
+        }
+    }
 
     function provideHint(guessIndex, rewardIndex) {
         const guessRow = Math.floor(guessIndex / gridSize);
@@ -151,15 +170,28 @@ function enableAllCells() {
     }
 
     function updateStats() {
-        energyElement.textContent = energy;
-        attemptsElement.textContent = `${attempts} / 150`;
-        if (energy <= 0 || attempts >= 150) {
+    attemptsElement.textContent = `${attempts} / 135`;
+    // Update the width of the energy bar
+    var energyBar = document.getElementById("energyBar");
+    energyBar.style.width = `${energy}%`;
+    energyBar.textContent = energy + "% Energy"; // Optional: Display text inside the bar
+	    // Change the color based on the energy level
+    if (energy > 66) { // High energy: green
+        energyBar.style.backgroundColor = "#4CAF50";
+    } else if (energy > 33) { // Medium energy: yellow
+        energyBar.style.backgroundColor = "#ffeb3b";
+    } else { // Low energy: red
+        energyBar.style.backgroundColor = "#f44336";
+    }
+        if (energy <= 0 || attempts >= 135) {
+			 loseSound.play();
             disableAllCells();
             hintText.textContent = "Game Over. Refresh to play again!";
         }
     }
 
     function disableAllCells() {
+		backgroundMusic.pause();
         for (let i = 0; i < gridSize * gridSize; i++) {
             document.getElementById(`cell-${i}`).classList.add('disabled');
         }
