@@ -352,13 +352,18 @@
 
                 hintText.textContent = ""; // Clear hint text
 
-                // Delay before proceeding with reset tasks to ensure pause effect
-                setTimeout(function() {
-                    // updateStats() is called in handleCorrectGuess, no need to call it again here unless necessary
-                    rewardCellIndex = selectRewardCell(); // Choose a new reward cell
-                    enableAllCells(); // Re-enable all cells for the new round
-                    isPaused = false; // Unpause the game
-                }); // Duration of pause before full reset continues (can be adjusted if needed)
+                // Removed the inner setTimeout and moved the unpause logic outside
+                rewardCellIndex = selectRewardCell(); // Choose a new reward cell
+                enableAllCells(); // Re-enable all cells for the new round
+                isPaused = false; // Unpause the game immediately after reset tasks
+            }
+
+            // Function to enable all grid cells
+            function enableAllCells() {
+                const cells = document.querySelectorAll('.gameCell');
+                cells.forEach(cell => {
+                    cell.classList.remove('disabled');
+                });
             }
 
             // Function to determine energy points added based on attempts in a round
@@ -393,7 +398,7 @@
                     disableCellsRightOf(guessCol);
                 } else { // guessCol < rewardCol
                     hintText.textContent = "To the right";
-                    disableCellsLeftOf(guessCol);
+                    disableCellsLeftOf(col); // Corrected variable name from index to col
                 }
             }
 
