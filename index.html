@@ -4,21 +4,497 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Energy Quest</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Combined CSS styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            font-weight: bold; /* Make all text bold */
+            font-size: 20px; /* Set the font size for all text */
+            background-color: #1a202c; /* Keep the dark background from previous version */
+            color: #e2e8f0; /* Keep light text */
+            display: flex; /* Keep flexbox for centering */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        /* Removed header styles as no header tag in the new HTML structure */
+
+        /* Energy bar container ID updated to match JS/CSS */
+        #energy-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 8px; /* Added border-radius for consistency */
+            overflow: hidden; /* Ensure bar stays within bounds */
+            margin-bottom: 20px; /* Keep margin below bar */
+            height: 50px; /* Match energyBar height */
+            position: relative; /* Keep relative for text positioning */
+        }
+
+        #energyBar {
+            transition: width 0.6s ease, background-color 0.6s ease;
+            width: 100%; /* Initial width */
+            height: 100%; /* Fill container height */
+            background-color: #4CAF50;
+            text-align: center; /* If you want text inside it */
+            font-weight: bold; /* Make all text bold */
+            font-size: 28px; /* Set the font size for all text */
+            line-height: 50px; /* Align the text vertically */
+            color: #001c30;
+            position: absolute; /* Position text over the bar */
+            top: 0;
+            left: 0;
+        }
+
+        /* Removed #stats ID styles as no #stats element in the new HTML structure */
+
+        /* Styles for the main game container */
+         .game-container {
+            background-color: #2d3748; /* Darker background for container */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+         .stats-container { /* Added container for attempts and energy bar */
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 1.1rem; /* Adjusted from 20px to 1.1rem for responsiveness */
+            gap: 10px;
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+        }
+
+        .stat-item { /* Added styles for individual stat items (attempts and energy) */
+            background-color: #4a5568; /* Slightly lighter background for stats */
+            padding: 10px 15px;
+            border-radius: 8px;
+            min-width: 100px;
+            text-align: center;
+            flex-grow: 1; /* Allow items to grow */
+        }
+
+
+        #gameGrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            width: 450px; /* Adjust based on your preference to make cells square */
+            margin: 10px auto;
+            background-color: white; /* Set light green color for the grid */
+            padding: 10px; /* Add padding for better appearance */
+            max-width: 100%; /* Make it responsive */
+            aspect-ratio: 1 / 1;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .gameCell {
+            transition: background-color 0.6s ease, transform 0.6s ease;
+            background-color: #4CAF50; /* Set light blue color for individual cells */
+            border: 1px solid #ddd;
+            padding: 0; /* Removed padding to help with square aspect ratio */
+            aspect-ratio: 1; /* Ensures cells are always square */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 20px; /* Set the font size for game cells */
+            user-select: none; /* Prevent text selection */
+            border-radius: 5px; /* Added border-radius for consistency */
+        }
+
+        .gameCell.click-effect {
+            transform: scale(0.9); /* Scales down the cell */
+        }
+
+        .found {
+            background-color: gold; /* Or any color you use for revealing cells */
+            transform: rotateY(180deg); /* Flip effect */
+            color: #001c30; /* Dark text on gold */
+            font-weight: bold;
+        }
+
+        .disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6; /* Added opacity for disabled cells */
+        }
+
+        .gameCell:hover:not(.disabled):not(.found) { /* Apply hover only if not disabled or found */
+            background-color: #e0e0e0; /* Light grey */
+            cursor: pointer; /* Changes the cursor to indicate the cell can be clicked */
+        }
+
+        #hintText {
+            color: green;
+            margin: 10px 0;
+            font-size: 24px; /* Set the font size for hint text */
+            min-height: 1.5em; /* Reserve space to prevent layout shifts */
+        }
+
+         /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-item {
+                width: 80%;
+                margin-bottom: 10px;
+            }
+
+            #gameGrid {
+                width: 100%; /* Make grid full width on small screens */
+                max-width: 300px; /* Still limit max width */
+            }
+             .gameCell {
+                font-size: 16px; /* Slightly smaller font on small screens */
+             }
+             #energyBar {
+                font-size: 20px; /* Adjust energy bar font */
+                line-height: 50px;
+             }
+             #hintText {
+                font-size: 20px; /* Adjust hint text font */
+             }
+        }
+        /* Combined CSS ends here */
+    </style>
 </head>
 <body>
-    <header>
-        <img src="images/logo.png" alt="Energy Quest Logo" id="logo">
-    </header>
-<section id="stats">
-	 <div id="energyBarContainer">
-        <div id="energyBar"></div>
+    <div class="game-container">
+        <h1>Energy Quest</h1>
+        <div class="stats-container">
+            <div class="stat-item">Attempts: <span id="attempts">0 / 140</span></div>
+            <div class="stat-item" id="energy-container">
+                 <div id="energyBar">100% Energy</div>
+            </div>
+        </div>
+        <div id="hintText">Goal: Reach 140 attempts and stay alive!</div>
+        <div id="gameGrid">
+            </div>
     </div>
-    <p><b>Number of Attempts:</b> <span id="attempts">0 / 140</span></p>
-</section>
 
-    <div id="gameGrid"></div>
-    <p id="hintText" style="color:green;">Goal: Reach 140 attempts and stay alive!</p>
-    <script src="script.js"></script>
+    <script>
+        // Combined JavaScript code
+        document.addEventListener('DOMContentLoaded', function() {
+            let attemptsThisRound = 0; // Resets at the start of each round
+            let isPaused = false; // Flag to check if the game is paused
+            let gameOver = false; // New flag to indicate if the game is over
+            const energyElement = document.getElementById('energy'); // This element is not used in the JS, consider removing or using it
+            const attemptsElement = document.getElementById('attempts');
+            const hintText = document.getElementById('hintText');
+            const gameGrid = document.getElementById('gameGrid');
+            let energy = 100;
+            let attempts = 0;
+            const gridSize = 7; // Size of the grid (7x7)
+            let rewardCellIndex = selectRewardCell(); // Select initial reward cell after gridSize is defined
+
+            // --- Audio Setup ---
+            // IMPORTANT: Replace 'sounds/click.wav', etc., with actual paths to your audio files.
+            // These are placeholders and will not work unless you provide the files.
+            const clickSound = new Audio('sounds/click.wav');
+            const rewardSound = new Audio('sounds/reward.wav');
+            const loseSound = new Audio('sounds/loose.wav');
+            const victorySound = new Audio('sounds/victory.wav');
+            const backgroundMusic = new Audio('sounds/background.mp3');
+
+            // Play background music in a loop
+            backgroundMusic.loop = true;
+            backgroundMusic.volume = 0.8; // Adjust volume as needed
+
+            // Start background music on the first user interaction (click on the grid)
+            // This helps comply with browser autoplay policies.
+            function startBackgroundMusic() {
+                if (backgroundMusic.paused) {
+                    backgroundMusic.play().catch(error => {
+                        console.error("Background music autoplay failed:", error);
+                        // Handle potential autoplay restrictions if needed
+                    });
+                    gameGrid.removeEventListener('click', startBackgroundMusic); // Remove listener after first play
+                }
+            }
+            gameGrid.addEventListener('click', startBackgroundMusic, { once: true }); // Use { once: true } for cleaner removal
+
+            // Get the energy bar element
+            let energyBar = document.getElementById("energyBar");
+
+
+            // Initialize the game grid
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                let cell = document.createElement('div');
+                cell.className = 'gameCell';
+                cell.id = `cell-${i}`;
+                // Add event listener to call the guess function when a cell is clicked
+                cell.addEventListener('click', () => guess(cell, i));
+                gameGrid.appendChild(cell);
+            }
+
+
+            // Function to select the reward cell based on probabilities
+            function selectRewardCell() {
+                // Probabilities for each cell (7x7 grid)
+                const probabilities = [
+                    16, 8, 8, 4, 8, 8, 16,
+                    8, 4, 8, 2, 8, 4, 8,
+                    8, 8, 8, 4, 8, 8, 8,
+                    4, 2, 4, 1, 4, 2, 4,
+                    8, 8, 8, 4, 8, 8, 8,
+                    8, 4, 8, 2, 8, 4, 8,
+                    16, 8, 8, 4, 8, 8, 16
+                ];
+                let total = probabilities.reduce((a, b) => a + b, 0);
+                let random = Math.random() * total;
+                for (let i = 0; i < probabilities.length; i++) {
+                    if (random < probabilities[i]) {
+                        return i; // Return the index of the selected cell
+                    }
+                    random -= probabilities[i];
+                }
+                return 0; // Fallback to the first cell if something goes wrong
+            }
+
+            // Function called when a cell is guessed
+            function guess(cell, index) {
+                // Prevent guessing if the game is paused or the cell is disabled or game is over
+                if (isPaused || cell.classList.contains('disabled') || gameOver) {
+                    return;
+                }
+
+                // Add and remove click effect class for visual feedback
+                cell.classList.add('click-effect');
+                setTimeout(() => cell.classList.remove('click-effect'), 100);
+
+                clickSound.play(); // Play click sound
+                attempts++; // Increment total attempts
+                attemptsThisRound++; // Increment attempts for the current round
+                energy -= 2; // Deduct 2 energy points for each guess (Increased Difficulty)
+
+                // Update stats immediately after energy deduction (checks for game over)
+                updateStats();
+
+                // If game is now over, stop processing this guess
+                if (gameOver) {
+                    return;
+                }
+
+                if (index === rewardCellIndex) {
+                    // Correct guess
+                    handleCorrectGuess();
+                } else {
+                    // Incorrect guess, provide hint
+                    provideHint(index, rewardCellIndex);
+                }
+
+                // updateStats() is already called after energy-- and in handleCorrectGuess,
+                // so no need to call it again here unless specific logic requires it.
+            }
+
+            // Function to handle a correct guess
+            function handleCorrectGuess() {
+                isPaused = true; // Pause the game
+                rewardSound.play(); // Play reward sound
+
+                let pointsAdded = getEnergyPointsAdded(attemptsThisRound); // Calculate points based on attempts this round
+                energy = Math.min(energy + pointsAdded, 100); // Add points, cap at 100 energy
+
+                // Highlight the correct cell
+                const correctCell = document.getElementById(`cell-${rewardCellIndex}`);
+                correctCell.classList.add('found');
+
+                // Construct and display the message
+                let message = `Congratulations! You've found the reward!<br>${pointsAdded} energy point`;
+                if (pointsAdded > 1) {
+                    message += 's'; // Add 's' for plural
+                }
+                message += ' added.';
+                hintText.innerHTML = message;
+
+                // Update stats immediately after gaining energy (this will check for victory)
+                updateStats();
+
+                // Reset the game after a delay, but only if the game is not over
+                if (!gameOver) {
+                     setTimeout(function() {
+                         resetGame();
+                     }, 2000); // Pause for 2 seconds before resetting
+                }
+            }
+
+            // Function to reset the game for a new round (only if not game over)
+            function resetGame() {
+                if (gameOver) return; // Do not reset if game is over
+
+                attemptsThisRound = 0; // Reset attempts for the new round
+
+                // Remove 'found' class from all cells
+                const goldenCells = document.querySelectorAll('.found');
+                goldenCells.forEach(cell => cell.classList.remove('found'));
+
+                hintText.textContent = ""; // Clear hint text
+
+                // Delay before proceeding with reset tasks to ensure pause effect
+                setTimeout(function() {
+                    // updateStats() is called in handleCorrectGuess, no need to call it again here unless necessary
+                    rewardCellIndex = selectRewardCell(); // Choose a new reward cell
+                    enableAllCells(); // Re-enable all cells for the new round
+                    isPaused = false; // Unpause the game
+                }); // Duration of pause before full reset continues (can be adjusted if needed)
+            }
+
+            // Function to determine energy points added based on attempts in a round
+            function getEnergyPointsAdded(attempts) {
+                switch (attempts) {
+                    case 1: return 16; // Reduced from 32
+                    case 2: return 8;  // Reduced from 16
+                    case 3: return 4;  // Reduced from 8
+                    case 4: return 2;  // Reduced from 4
+                    case 5: return 1;  // Reduced from 2
+                    default: return 0; // Reduced from 1 (6 or more attempts now give 0)
+                }
+            }
+
+            // Function to provide directional hints and disable cells
+            function provideHint(guessIndex, rewardIndex) {
+                // Calculate row and column for both guess and reward
+                const guessRow = Math.floor(guessIndex / gridSize);
+                const guessCol = guessIndex % gridSize;
+                const rewardRow = Math.floor(rewardIndex / gridSize);
+                const rewardCol = rewardIndex % gridSize;
+
+                // Provide hint and disable cells based on relative position
+                if (guessRow > rewardRow) {
+                    hintText.textContent = "Up";
+                    disableCellsBelow(guessRow);
+                } else if (guessRow < rewardRow) {
+                    hintText.textContent = "Down";
+                    disableCellsAbove(guessRow);
+                } else if (guessCol > rewardCol) {
+                    hintText.textContent = "To the left";
+                    disableCellsRightOf(guessCol);
+                } else { // guessCol < rewardCol
+                    hintText.textContent = "To the right";
+                    disableCellsLeftOf(guessCol);
+                }
+            }
+
+            // Function to update the displayed stats and check game over/victory
+            function updateStats() {
+                attemptsElement.textContent = `${attempts} / 140`;
+
+                // Update the width and text of the energy bar
+                energyBar.style.width = `${energy}%`;
+                energyBar.textContent = energy + "% Energy";
+
+                // Change the color of the energy bar based on energy level
+                if (energy > 66) { // High energy: green
+                    energyBar.style.backgroundColor = "#4CAF50";
+                } else if (energy > 33) { // Medium energy: yellow
+                    energyBar.style.backgroundColor = "#ffeb3b";
+                } else { // Low energy: red
+                    energyBar.style.backgroundColor = "#f44336";
+                }
+
+                // Check for game over or victory conditions
+                if (gameOver) {
+                    // If game is already over, do nothing further
+                    return;
+                }
+
+                if (energy <= 0) {
+                    // Game Over due to energy depletion
+                    loseSound.play();
+                    disableAllCells();
+                    hintText.textContent = "Game Over. Energy depleted! Refresh to play again!";
+                    backgroundMusic.pause();
+                    isPaused = true;
+                    gameOver = true;
+                } else if (attempts >= 140) {
+                    // Reached 140 attempts. Check if energy is still > 0 for victory.
+                     disableAllCells(); // Disable cells after reaching attempt limit
+                     backgroundMusic.pause();
+                     isPaused = true;
+                     gameOver = true;
+
+                     if (energy > 0) {
+                         // Victory condition met
+                         victorySound.play();
+                         hintText.textContent = "Congratulations! You've reached 140 attempts with energy remaining!";
+                         // Optional: Visually mark all cells as 'found' on victory
+                         const allCells = document.querySelectorAll('.gameCell');
+                         allCells.forEach(cell => cell.classList.add('found'));
+                     } else {
+                          // Reached 140 attempts with no energy left - a loss (this case should ideally be caught by the energy <= 0 check)
+                          loseSound.play();
+                          hintText.textContent = "Game Over. Reached 140 attempts with no energy left. Refresh to play again!";
+                     }
+                }
+            }
+
+            // Function to disable all grid cells
+            function disableAllCells() {
+                for (let i = 0; i < gridSize * gridSize; i++) {
+                    document.getElementById(`cell-${i}`).classList.add('disabled');
+                }
+            }
+
+            // Functions to disable cells based on row/column
+            function disableCellsBelow(row) {
+                for (let i = 0; i < gridSize; i++) { // Iterate through columns
+                    for (let j = row; j < gridSize; j++) { // Iterate through rows below the given row
+                        document.getElementById(`cell-${j * gridSize + i}`).classList.add('disabled');
+                    }
+                }
+            }
+
+            function disableCellsAbove(row) {
+                for (let i = 0; i < gridSize; i++) { // Iterate through columns
+                    for (let j = 0; j <= row; j++) { // Iterate through rows above or at the given row
+                        document.getElementById(`cell-${j * gridSize + i}`).classList.add('disabled');
+                    }
+                }
+            }
+
+            function disableCellsRightOf(col) {
+                for (let i = 0; i < gridSize * gridSize; i++) {
+                    let cellCol = i % gridSize; // Get the column of the current cell
+                    if (cellCol >= col) { // If the cell is at or to the right of the given column
+                        document.getElementById(`cell-${i}`).classList.add('disabled');
+                    }
+                }
+            }
+
+            function disableCellsLeftOf(col) {
+                for (let i = 0; i < gridSize * gridSize; i++) {
+                    let cellCol = i % gridSize; // Get the column of the current cell
+                    if (cellCol <= col) { // If the cell is at or to the left of the given column
+                        document.getElementById(`cell-${i}`).classList.add('disabled');
+                    }
+                }
+            }
+
+            // Initial update of stats when the page loads
+            updateStats();
+        });
+    </script>
 </body>
 </html>
