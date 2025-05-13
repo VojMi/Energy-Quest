@@ -398,7 +398,8 @@
                     disableCellsRightOf(guessCol);
                 } else { // guessCol < rewardCol
                     hintText.textContent = "To the right";
-                    disableCellsLeftOf(col); // Corrected variable name from index to col
+                    // Corrected the variable name from 'index' to 'col'
+                    disableCellsLeftOf(guessCol);
                 }
             }
 
@@ -492,7 +493,8 @@
                 for (let i = 0; i < gridSize * gridSize; i++) {
                     let cellCol = i % gridSize; // Get the column of the current cell
                     if (cellCol <= col) { // If the cell is at or to the left of the given column
-                        document.getElementById(`cell-${i}`).classList.add('disabled');
+                         // Corrected the index calculation here
+                        document.getElementById(`cell-${Math.floor(i / gridSize) * gridSize + cellCol}`).classList.add('disabled');
                     }
                 }
             }
