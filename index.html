@@ -184,12 +184,12 @@
     <div class="game-container">
         <h1>Energy Quest</h1>
         <div class="stats-container">
-            <div class="stat-item">Attempts: <span id="attempts">0 / 140</span></div>
+            <div class="stat-item">Attempts: <span id="attempts">0 / 100</span></div>
             <div class="stat-item" id="energy-container">
                  <div id="energyBar">100% Energy</div>
             </div>
         </div>
-        <div id="hintText">Goal: Reach 140 attempts and stay alive!</div>
+        <div id="hintText">Goal: Reach 100 attempts and stay alive!</div>
         <div id="gameGrid">
             </div>
     </div>
@@ -405,7 +405,7 @@
 
             // Function to update the displayed stats and check game over/victory
             function updateStats() {
-                attemptsElement.textContent = `${attempts} / 140`;
+                attemptsElement.textContent = `${attempts} / 100;
 
                 // Update the width and text of the energy bar
                 energyBar.style.width = `${energy}%`;
@@ -434,8 +434,8 @@
                     backgroundMusic.pause();
                     isPaused = true;
                     gameOver = true;
-                } else if (attempts >= 140) {
-                    // Reached 140 attempts. Check if energy is still > 0 for victory.
+                } else if (attempts >= 100) {
+                    // Reached 100 attempts. Check if energy is still > 0 for victory.
                      disableAllCells(); // Disable cells after reaching attempt limit
                      backgroundMusic.pause();
                      isPaused = true;
@@ -444,14 +444,14 @@
                      if (energy > 0) {
                          // Victory condition met
                          victorySound.play();
-                         hintText.textContent = "Congratulations! You've reached 140 attempts with energy remaining!";
+                         hintText.textContent = "Congratulations! You've reached 100 attempts with energy remaining!";
                          // Optional: Visually mark all cells as 'found' on victory
                          const allCells = document.querySelectorAll('.gameCell');
                          allCells.forEach(cell => cell.classList.add('found'));
                      } else {
-                          // Reached 140 attempts with no energy left - a loss (this case should ideally be caught by the energy <= 0 check)
+                          // Reached 100 attempts with no energy left - a loss (this case should ideally be caught by the energy <= 0 check)
                           loseSound.play();
-                          hintText.textContent = "Game Over. Reached 140 attempts with no energy left. Refresh to play again!";
+                          hintText.textContent = "Game Over. Reached 100 attempts with no energy left. Refresh to play again!";
                      }
                 }
             }
