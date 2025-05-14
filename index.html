@@ -56,7 +56,7 @@
         /* Removed #stats ID styles as no #stats element in the new HTML structure */
 
         /* Styles for the main game container */
-         .game-container {
+        .game-container {
             background-color: #2d3748; /* Darker background for container */
             padding: 30px;
             border-radius: 15px;
@@ -66,7 +66,7 @@
             width: 100%;
         }
 
-         .stats-container { /* Added container for attempts and energy bar */
+        .stats-container { /* Added container for attempts and energy bar */
             display: flex;
             justify-content: space-around;
             margin-bottom: 20px;
@@ -142,7 +142,7 @@
             min-height: 1.5em; /* Reserve space to prevent layout shifts */
         }
 
-         /* Responsive adjustments */
+        /* Responsive adjustments */
         @media (max-width: 600px) {
             .game-container {
                 padding: 20px;
@@ -166,16 +166,16 @@
                 width: 100%; /* Make grid full width on small screens */
                 max-width: 300px; /* Still limit max width */
             }
-             .gameCell {
+            .gameCell {
                 font-size: 16px; /* Slightly smaller font on small screens */
-             }
-             #energyBar {
+            }
+            #energyBar {
                 font-size: 20px; /* Adjust energy bar font */
                 line-height: 50px;
-             }
-             #hintText {
+            }
+            #hintText {
                 font-size: 20px; /* Adjust hint text font */
-             }
+            }
         }
         /* Combined CSS ends here */
     </style>
@@ -186,7 +186,7 @@
         <div class="stats-container">
             <div class="stat-item">Attempts: <span id="attempts">0 / 100</span></div>
             <div class="stat-item" id="energy-container">
-                 <div id="energyBar">100% Energy</div>
+                <div id="energyBar">100% Energy</div>
             </div>
         </div>
         <div id="hintText">Goal: Reach 100 attempts and stay alive!</div>
@@ -287,7 +287,7 @@
                 clickSound.play(); // Play click sound
                 attempts++; // Increment total attempts
                 attemptsThisRound++; // Increment attempts for the current round
-                energy -= 1; // Deduct 1 energy points for each guess 
+                energy -= 1; // Deduct 1 energy points for each guess
 
                 // Update stats immediately after energy deduction (checks for game over)
                 updateStats();
@@ -334,9 +334,9 @@
 
                 // Reset the game after a delay, but only if the game is not over
                 if (!gameOver) {
-                     setTimeout(function() {
-                         resetGame();
-                     }, 2000); // Pause for 2 seconds before resetting
+                    setTimeout(function() {
+                        resetGame();
+                    }, 2000); // Pause for 2 seconds before resetting
                 }
             }
 
@@ -369,12 +369,12 @@
             // Function to determine energy points added based on attempts in a round
             function getEnergyPointsAdded(attempts) {
                 switch (attempts) {
-                    case 1: return 32; 
-                    case 2: return 16;  
-                    case 3: return 8;  
-                    case 4: return 4;  
-                    case 5: return 2;  
-                    default: return 1; 
+                    case 1: return 32;
+                    case 2: return 16;
+                    case 3: return 8;
+                    case 4: return 4;
+                    case 5: return 2;
+                    default: return 1;
                 }
             }
 
@@ -398,14 +398,13 @@
                     disableCellsRightOf(guessCol);
                 } else { // guessCol < rewardCol
                     hintText.textContent = "To the right";
-                    // Corrected the variable name from 'index' to 'col'
-                    disableCellsLeftOf(guessCol);
+                    disableCellsLeftOf(guessCol); // Call the corrected function
                 }
             }
 
             // Function to update the displayed stats and check game over/victory
             function updateStats() {
-                attemptsElement.textContent = `${attempts} / 100;
+                attemptsElement.textContent = `${attempts} / 100`; // Corrected missing closing backtick
 
                 // Update the width and text of the energy bar
                 energyBar.style.width = `${energy}%`;
@@ -436,23 +435,23 @@
                     gameOver = true;
                 } else if (attempts >= 100) {
                     // Reached 100 attempts. Check if energy is still > 0 for victory.
-                     disableAllCells(); // Disable cells after reaching attempt limit
-                     backgroundMusic.pause();
-                     isPaused = true;
-                     gameOver = true;
+                    disableAllCells(); // Disable cells after reaching attempt limit
+                    backgroundMusic.pause();
+                    isPaused = true;
+                    gameOver = true;
 
-                     if (energy > 0) {
-                         // Victory condition met
-                         victorySound.play();
-                         hintText.textContent = "Congratulations! You've reached 100 attempts with energy remaining!";
-                         // Optional: Visually mark all cells as 'found' on victory
-                         const allCells = document.querySelectorAll('.gameCell');
-                         allCells.forEach(cell => cell.classList.add('found'));
-                     } else {
-                          // Reached 100 attempts with no energy left - a loss (this case should ideally be caught by the energy <= 0 check)
-                          loseSound.play();
-                          hintText.textContent = "Game Over. Reached 100 attempts with no energy left. Refresh to play again!";
-                     }
+                    if (energy > 0) {
+                        // Victory condition met
+                        victorySound.play();
+                        hintText.textContent = "Congratulations! You've reached 100 attempts with energy remaining!";
+                        // Optional: Visually mark all cells as 'found' on victory
+                        const allCells = document.querySelectorAll('.gameCell');
+                        allCells.forEach(cell => cell.classList.add('found'));
+                    } else {
+                        // Reached 100 attempts with no energy left - a loss (this case should ideally be caught by the energy <= 0 check)
+                        loseSound.play();
+                        hintText.textContent = "Game Over. Reached 100 attempts with no energy left. Refresh to play again!";
+                    }
                 }
             }
 
@@ -489,14 +488,19 @@
                 }
             }
 
+            // Corrected function to disable cells to the left of a given column
             function disableCellsLeftOf(col) {
-                for (let i = 0; i < gridSize * gridSize; i++) {
-                    let cellCol = i % gridSize; // Get the column of the current cell
-                    if (cellCol <= col) { // If the cell is at or to the left of the given column
-                         // Corrected the index calculation here
-                        document.getElementById(`cell-${Math.floor(i / gridSize) * gridSize + cellCol}`).classList.add('disabled');
+                // Get all the game cells
+                const cells = document.querySelectorAll('.gameCell');
+                // Iterate through each cell
+                cells.forEach((cell, index) => {
+                    // Calculate the column index of the current cell
+                    let cellCol = index % gridSize;
+                    // If the cell's column is less than or equal to the target column, disable it
+                    if (cellCol <= col) {
+                        cell.classList.add('disabled');
                     }
-                }
+                });
             }
 
             // Initial update of stats when the page loads
